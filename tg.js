@@ -5,7 +5,7 @@ const bot = new TelegramBot(token, { polling: true });
 const db = require("./utils/db")
 bot.on('message', async(msg) => {
     try {
-        console.log(msg)
+        // console.log(msg)
         if(msg.chat.id != process.env.LISTEN_GROUP)
         {
             return false;
@@ -16,7 +16,7 @@ bot.on('message', async(msg) => {
             text:msg.text,
             timestamp:msg.date
         }
-
+        await db.newUser(msg.from);
         await db.newMsg(_msg);
         if (msg["reply_to_message"]) {
             // console.log(msg)
