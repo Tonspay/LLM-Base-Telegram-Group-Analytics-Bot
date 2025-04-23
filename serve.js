@@ -78,6 +78,10 @@ async function loop() {
             
             const data = await sum()
             lastIndex = count.total;
+            await db.updateMonitorIndexer({
+                id:0,
+                index:count.total
+            })
             await sendSum(
                 tg.getBot(),data
             )
@@ -88,6 +92,7 @@ async function loop() {
     }
 }
 async function init() {
+    lastIndex = (await db.getMonitorIndexer()).index
     await loop();
 }
 

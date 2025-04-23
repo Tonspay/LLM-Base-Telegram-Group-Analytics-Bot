@@ -10,6 +10,7 @@ const sMsg = "msg";
 
 const sSum = "summary";
 
+const sMonitorIndexer = "monitor_indexer"
 
 async function newUser(data) {
     const pool = await MongoClient.connect(process.env.SQL_HOST);
@@ -108,6 +109,31 @@ async function getSum(time) {
     return ret;
 }
 
+async function updateMonitorIndexer(data) {
+    const pool = await MongoClient.connect(process.env.SQL_HOST)
+    var db = pool.db(mainDB);
+    const query = { id: data.id }; 
+    const ret = await db.collection(sMonitorIndexer).replaceOne(query, data, { upsert: true });
+    await pool.close();
+    return ret;
+}
+
+async function getMonitorIndexer() {
+    const pool = await MongoClient.connect(process.env.SQL_HOST)
+    var db = pool.db(mainDB);
+    var ret = await db.collection(sMonitorIndexer).find({
+       
+    }).project({_id:0}).toArray();
+    await pool.close();
+    if(!ret || ret?.length ==0)
+    {
+        return {
+            id:0,
+            index:0
+        }
+    }
+    return ret[0];
+}
 
 module.exports = {
     newMsg,
@@ -115,5 +141,7 @@ module.exports = {
     newUser,
     getUserById,
     getMsgById,
-    countMsgAndMaxId
+    countMsgAndMaxId,
+    updateMonitorIndexer,
+    getMonitorIndexer
 }
